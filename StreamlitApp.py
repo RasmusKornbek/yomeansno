@@ -1,18 +1,20 @@
-import snowflake.connector
+from snowflake.snowpark.context import get_active_session
+from snowflake.snowpark.functions import sum, col
+import altair as alt
+import streamlit as st
 
-import streamlit
-import snowflake.connector
-import pandas
-streamlit.title('Zena\'s Amazing Athleisure Catalog')
-# connect to snowflake
-my_cnx = snowflake.connector.connect(**streamlit.secrets["snowflake"])
-my_cur = my_cnx.cursor()
+# Set page config
+st.set_page_config(layout="wide")
 
+# Get current session
+session = get_active_session()
 
+@st.cache_data()
+def load_data():
+    # Load CO2 emissions data
+    snow_df_co2 = session.table("streamlit.dsi.mytable").filter(col('NAME') == 'Mary').filter(col('PET') == 'All Type').sort('"Date"').with_column_renamed('"Date"','"Year"')
 
-# Perform query.
-df = conn.query('SELECT * from mytable;', ttl=600)
+    return snow_df_co2.to_pandas()
 
-# Print results.
-for row in df.itertuples():
-    st.write(f"{row.NAME} has a :{row.PET}:")
+# Load and cache data
+df_co2_overtime = load_data()
