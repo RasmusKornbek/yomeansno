@@ -9,12 +9,6 @@ my_cnx = snowflake.connector.connect(**streamlit.secrets["snowflake"])
 my_cur = my_cnx.cursor()
 
 
-# streamlit_app.py
-
-import streamlit as st
-
-# Initialize connection.
-conn = st.experimental_connection('snowpark')
 
 # Perform query.
 df = conn.query('SELECT * from mytable;', ttl=600)
